@@ -1,0 +1,24 @@
+#Metoda 1 - Online
+Install-Module Microsoft.PowerShell.SecretManagement
+Install-Module Microsoft.PowerShell.SecretStore
+Install-Module SecretManagement.Hashicorp.Vault.KV
+ 
+#Metoda 2 - Manualnie
+$SecretManagementLocation = ""
+$SecretStoreLocation = ""
+$HashicorpLocation = ""
+ 
+$lik = "C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
+
+New-Item "$lik\Microsoft.Powershell.SecretManagement" -ItemType Directory
+New-Item "$lik\Microsoft.Powershell.SecretStore" -ItemType Directory
+New-Item "$lik\SecretManagement.Hashicorp.Vault.KV" -ItemType Directory
+ 
+Copy-Item "$SecretManagementLocation\*" "$lik\Microsoft.Powershell.SecretManagement" -Force -Recurse
+Copy-Item "$SecretStoreLocation\*" "$lik\Microsoft.Powershell.SecretStore" -Force -Recurse
+Copy-Item "$HashicorpLocation\*" "$lik\SecretManagement.Hashicorp.Vault.KV" -Force -Recurse
+ 
+#Import
+Import-Module Microsoft.Powershell.SecretManagement
+Import-Module Microsoft.Powershell.SecretStore
+Import-Module SecretManagement.Hashicorp.Vault.KV
