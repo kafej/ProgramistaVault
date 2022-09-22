@@ -1,0 +1,12 @@
+Import-Module Microsoft.Powershell.SecretManagement
+Import-Module Microsoft.Powershell.SecretStore
+Import-Module SecretManagement.Hashicorp.Vault.KV
+ 
+Register-SecretVault -Name SecretStore -ModuleName Microsoft.PowerShell.SecretStore -DefaultVault
+ 
+Set-Secret -Name Programista3 -Secret "test123"
+ 
+Get-SecretInfo
+Get-Secret -Vault secret -Name Programista
+Get-Secret -Vault secret -Name Programista1
+Get-Secret -Vault SecretStore -Name Programista3 -AsPlainText
