@@ -1,0 +1,8 @@
+Import-Module Microsoft.Powershell.SecretManagement
+Import-Module SecretManagement.Hashicorp.Vault.KV
+ 
+Register-SecretVault -ModuleName SecretManagement.Hashicorp.Vault.KV -Name "secret" -VaultParameters @{VaultServer="http://127.0.0.1:8200"; VaultAuthType="userpass"}
+ 
+Get-SecretInfo
+Get-Secret -Vault secret -Name Programista
+Get-Secret -Vault se
