@@ -1,0 +1,42 @@
+function rdsNewAsync ($search) {
+    $SyncHash = [hashtable]::Synchronized(@{Window = $Form; DataGridRds = $DataGridRds; info = $info; infoa = $infoa; infoi = $infoi; pbar = $pbar})
+    $Runspace = [runspacefactory]::CreateRunspace()
+    $Runspace.ThreadOptions = "ReuseThread"
+    $Runspace.Open()
+    $Runspace.SessionStateProxy.SetVariable("SyncHash", $SyncHash)
+    $Worker = [PowerShell]::Create().AddScript({
+            Param ($search)
+
+            Import-Module Microsoft.Powershell.SecretManagement
+            Import-Module SecretManagement.Hashicorp.Vault.KV
+
+            Register-SecretVault -ModuleName SecretManagement.Hashicorp.Vault.KV -Name "secret" -VaultParameters @{VaultServer="http://127.0.0.1:8200"; VaultAuthType="userpass"}
+            $script:observableCollection = [System.Collections.ObjectModel.ObservableCollection[Object]]::new()
+
+            $lik = Get-SecretInfo
+            $lik | ForEach-Object {
+                $objArray = New-Object PSObject
+                $objArray | Add-Member -type NoteProperty -name Serwer -value $_."Name"
+            
+                #Get-Secret -Vault secret -Name $_.Name -AsPlainText
+            
+                $loko = Get-Secret -Vault secret -Name $_."Name" -AsPlainText
+            
+                $loko.GetEnumerator() | ForEach-Object{
+                    $lol1 = $_.key
+                    $lol2 = $_.value
+                }
+            
+                $objArray | Add-Member -type NoteProperty -name Login -value $lol1
+                $objArray | Add-Member -type NoteProperty -name pass -value $lol2
+                $script:observableCollection.Add($objArray) | Out-Null
+            }
+
+            $SyncHash.Window.Dispatcher.Invoke([action]{$SyncHash.DataGridRds.ItemsSource=$Script:observableCollection})
+            $SyncHash.Window.Dispatcher.Invoke([action]{$SyncHash.infoi.Text=$akd})
+            $SyncHash.Window.Dispatcher.Invoke([action]{$SyncHash.infoa.Text=$akc})
+            $SyncHash.Window.Dispatcher.Invoke([action]{$SyncHash.info.Text=$akd+$akc})
+    }).AddArgument($search)
+    $Worker.Runspace = $Runspace
+    $Worker.BeginInvoke()
+}
