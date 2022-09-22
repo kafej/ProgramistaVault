@@ -10,3 +10,5 @@ Get-SecretInfo
 Get-Secret -Vault secret -Name Programista
 Get-Secret -Vault secret -Name Programista1
 Get-Secret -Vault SecretStore -Name Programista3 -AsPlainText
+
+Get-SecretStoreConfiguration
